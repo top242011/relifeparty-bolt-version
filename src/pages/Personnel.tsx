@@ -295,11 +295,10 @@ export function Personnel() {
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Select Campus</option>
-                <option value="Main Campus">Main Campus</option>
-                <option value="North Campus">North Campus</option>
-                <option value="South Campus">South Campus</option>
-                <option value="East Campus">East Campus</option>
-                <option value="West Campus">West Campus</option>
+                <option value="Tha Prachan">Tha Prachan</option>
+                <option value="Rangsit">Rangsit</option>
+                <option value="Lampang">Lampang</option>
+                <option value="Pattaya">Pattaya</option>
               </select>
               {errors.campus && <p className="mt-1 text-sm text-red-600">{errors.campus.message}</p>}
             </div>
