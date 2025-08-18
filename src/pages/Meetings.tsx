@@ -186,6 +186,13 @@ export function Meetings() {
     }))
   }
 
+  const handleBulkAttendance = (attended: boolean) => {
+    const newAttendanceData = Object.fromEntries(
+      personnel.map(person => [person.id, attended])
+    );
+    setAttendanceData(newAttendanceData);
+  };
+
   const columns: Column<Meeting>[] = [
     {
       key: 'date', 
@@ -359,7 +366,21 @@ export function Meetings() {
             </p>
           </div>
 
-          <div className="max-h-96 overflow-y-auto">
+          <div className="flex space-x-2 mb-4">
+            <button
+              onClick={() => handleBulkAttendance(true)}
+              className="px-3 py-1 text-sm bg-green-100 text-green-800 rounded-md hover:bg-green-200"
+            >
+              Mark All Present
+            </button>
+            <button
+              onClick={() => handleBulkAttendance(false)}
+              className="px-3 py-1 text-sm bg-red-100 text-red-800 rounded-md hover:bg-red-200"
+            >
+              Mark All Absent
+            </button>
+          </div>
+          <div className="max-h-80 overflow-y-auto">
             <div className="space-y-2">
               {personnel.map(person => (
                 <div key={person.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -371,30 +392,27 @@ export function Meetings() {
                     </div>
                   </div>
                   
-                  <div className="flex items-center">
-                    <label
-                      htmlFor={`attendance-${person.id}`}
-                      className="flex items-center cursor-pointer"
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => handleAttendanceChange(person.id, true)}
+                      className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                        attendanceData[person.id] === true
+                          ? 'bg-green-600 text-white'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
                     >
-                      <div className="relative">
-                        <input
-                          type="checkbox"
-                          id={`attendance-${person.id}`}
-                          className="sr-only"
-                          checked={attendanceData[person.id] || false}
-                          onChange={(e) => handleAttendanceChange(person.id, e.target.checked)}
-                        />
-                        <div className="block bg-gray-600 w-14 h-8 rounded-full"></div>
-                        <div
-                          className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${
-                            attendanceData[person.id] ? 'translate-x-6 bg-green-500' : 'bg-red-500'
-                          }`}
-                        ></div>
-                      </div>
-                      <div className="ml-3 text-gray-700 font-medium">
-                        {attendanceData[person.id] ? 'Present' : 'Absent'}
-                      </div>
-                    </label>
+                      Present
+                    </button>
+                    <button
+                      onClick={() => handleAttendanceChange(person.id, false)}
+                      className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                        attendanceData[person.id] === false
+                          ? 'bg-red-600 text-white'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      }`}
+                    >
+                      Absent
+                    </button>
                   </div>
                 </div>
               ))}
