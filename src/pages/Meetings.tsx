@@ -372,27 +372,29 @@ export function Meetings() {
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-4">
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name={`attendance-${person.id}`}
-                        checked={attendanceData[person.id] === true}
-                        onChange={() => handleAttendanceChange(person.id, true)}
-                        className="h-4 w-4 text-green-600 focus:ring-green-500"
-                      />
-                      <span className="ml-2 text-sm text-green-700">Present</span>
-                    </label>
-                    
-                    <label className="flex items-center">
-                      <input
-                        type="radio"
-                        name={`attendance-${person.id}`}
-                        checked={attendanceData[person.id] === false}
-                        onChange={() => handleAttendanceChange(person.id, false)}
-                        className="h-4 w-4 text-red-600 focus:ring-red-500"
-                      />
-                      <span className="ml-2 text-sm text-red-700">Absent</span>
+                  <div className="flex items-center">
+                    <label
+                      htmlFor={`attendance-${person.id}`}
+                      className="flex items-center cursor-pointer"
+                    >
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          id={`attendance-${person.id}`}
+                          className="sr-only"
+                          checked={attendanceData[person.id] || false}
+                          onChange={(e) => handleAttendanceChange(person.id, e.target.checked)}
+                        />
+                        <div className="block bg-gray-600 w-14 h-8 rounded-full"></div>
+                        <div
+                          className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${
+                            attendanceData[person.id] ? 'translate-x-6 bg-green-500' : 'bg-red-500'
+                          }`}
+                        ></div>
+                      </div>
+                      <div className="ml-3 text-gray-700 font-medium">
+                        {attendanceData[person.id] ? 'Present' : 'Absent'}
+                      </div>
                     </label>
                   </div>
                 </div>
