@@ -58,7 +58,11 @@ export function Meetings() {
         personnelAPI.getAll()
       ])
       setMeetings(meetingsData)
-      setPersonnel(personnelData)
+
+      const uniquePersonnel = personnelData.filter((person, index, self) =>
+        index === self.findIndex((p) => p.id === person.id)
+      )
+      setPersonnel(uniquePersonnel)
     } catch (error) {
       console.error('Error loading data:', error)
       toast.error('Failed to load meetings data')
