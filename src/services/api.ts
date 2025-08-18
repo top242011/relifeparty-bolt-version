@@ -135,7 +135,7 @@ export const meetingsAPI = {
     const { data, error } = await supabase
       .from('meetings')
       .select('*')
-      .eq('id', id)
+      .eq('meeting_id', id)
       .single()
 
     if (error) throw error
@@ -157,7 +157,7 @@ export const meetingsAPI = {
     const { data, error } = await supabase
       .from('meetings')
       .update({ ...meeting, updated_at: new Date().toISOString() })
-      .eq('id', id)
+      .eq('meeting_id', id)
       .select()
       .single()
 
@@ -166,10 +166,10 @@ export const meetingsAPI = {
   },
 
   async delete(id: string): Promise<void> {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('meetings')
       .delete()
-      .eq('id', id)
+      .eq('meeting_id', id)
 
     if (error) throw error
   },

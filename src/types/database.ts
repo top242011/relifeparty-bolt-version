@@ -71,7 +71,7 @@ export interface Database {
       }
       meetings: {
         Row: {
-          id: string
+          meeting_id: string
           date: string
           main_topic: string
           scope: string
@@ -79,7 +79,7 @@ export interface Database {
           updated_at: string
         }
         Insert: {
-          id?: string
+          meeting_id?: string
           date: string
           main_topic: string
           scope: string
@@ -87,7 +87,7 @@ export interface Database {
           updated_at?: string
         }
         Update: {
-          id?: string
+          meeting_id?: string
           date?: string
           main_topic?: string
           scope?: string
