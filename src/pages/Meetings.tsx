@@ -12,6 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
 import { format } from 'date-fns'
+import { isValidUUID } from '../lib/utils'
 
 const meetingSchema = z.object({
   date: z.string().min(1, 'Meeting date is required'),
@@ -87,6 +88,12 @@ export function Meetings() {
   }
 
   const handleAttendance = async (meeting: Meeting) => {
+    // Validate meeting ID before proceeding
+    if (!isValidUUID(meeting.id)) {
+      toast.error('Invalid meeting ID. Cannot load attendance.')
+      return
+    }
+
     setSelectedMeeting(meeting)
     
     try {

@@ -12,6 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
 import { format } from 'date-fns'
+import { isValidUUID } from '../lib/utils'
 
 const motionSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -122,6 +123,13 @@ export function Motions() {
   const onSubmit = async (data: MotionFormData) => {
     try {
       if (editingMotion) {
+        // Validate editing motion ID before proceeding
+        if (!isValidUUID(editingMotion.id)) {
+          toast.error('Invalid motion ID. Cannot update motion.')
+          setIsModalOpen(false)
+          return
+        }
+
         const updated = await motionsAPI.update(editingMotion.id, data)
         const motionWithDetails = {
           ...updated,
