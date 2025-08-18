@@ -89,7 +89,7 @@ export function Meetings() {
 
   const handleAttendance = async (meeting: Meeting) => {
     // Validate meeting ID before proceeding
-    if (!isValidUUID(meeting.id)) {
+    if (!isValidUUID(meeting.meeting_id)) {
       toast.error('Invalid meeting ID. Cannot load attendance.')
       return
     }
@@ -97,7 +97,7 @@ export function Meetings() {
     setSelectedMeeting(meeting)
     
     try {
-      const attendance = await meetingsAPI.getAttendance(meeting.id)
+      const attendance = await meetingsAPI.getAttendance(meeting.meeting_id)
       setAttendanceRecords(attendance)
       
       // Create attendance data map
@@ -122,9 +122,16 @@ export function Meetings() {
   const confirmDelete = async () => {
     if (!deleteConfirm.meeting) return
 
+    // Validate meeting ID before proceeding
+    if (!isValidUUID(deleteConfirm.meeting.meeting_id)) {
+      toast.error('Invalid meeting ID. Cannot delete meeting.')
+      setDeleteConfirm({ isOpen: false, meeting: null })
+      return
+    }
+
     try {
-      await meetingsAPI.delete(deleteConfirm.meeting.id)
-      setMeetings(prev => prev.filter(m => m.id !== deleteConfirm.meeting!.id))
+      await meetingsAPI.delete(deleteConfirm.meeting.meeting_id)
+      setMeetings(prev => prev.filter(m => m.meeting_id !== deleteConfirm.meeting!.meeting_id))
       toast.success('Meeting deleted successfully')
     } catch (error) {
       console.error('Error deleting meeting:', error)
@@ -137,8 +144,8 @@ export function Meetings() {
   const onSubmit = async (data: MeetingFormData) => {
     try {
       if (editingMeeting) {
-        const updated = await meetingsAPI.update(editingMeeting.id, data)
-        setMeetings(prev => prev.map(m => m.id === updated.id ? updated : m))
+        const updated = await meetingsAPI.update(editingMeeting.meeting_id, data)
+        setMeetings(prev => prev.map(m => m.meeting_id === updated.meeting_id ? updated : m))
         toast.success('Meeting updated successfully')
       } else {
         const created = await meetingsAPI.create(data)
@@ -158,7 +165,7 @@ export function Meetings() {
 
     try {
       const attendanceInserts = Object.entries(attendanceData).map(([personnelId, attended]) => ({
-        meeting_id: selectedMeeting.id,
+        meeting_id: selectedMeeting.meeting_id,
         personnel_id: personnelId,
         attended
       }))
@@ -181,7 +188,7 @@ export function Meetings() {
 
   const columns: Column<Meeting>[] = [
     {
-      key: 'date',
+      key: 'date', 
       title: 'Date',
       sortable: true,
       render: (value) => format(new Date(value), 'MMM dd, yyyy')

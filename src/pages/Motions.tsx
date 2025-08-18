@@ -17,8 +17,8 @@ import { isValidUUID } from '../lib/utils'
 const motionSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
-  proposer_id: z.string().min(1, 'Proposer is required'),
-  meeting_id: z.string().min(1, 'Meeting is required'),
+  proposer_id: z.string().uuid('Please select a valid proposer'),
+  meeting_id: z.string().uuid('Please select a valid meeting'),
   voting_status: z.enum(['Passed', 'Failed', 'Pending'], {
     required_error: 'Voting status is required'
   })
@@ -108,9 +108,16 @@ export function Motions() {
   const confirmDelete = async () => {
     if (!deleteConfirm.motion) return
 
+    // Validate motion ID before proceeding
+    if (!isValidUUID(deleteConfirm.motion.motion_id)) {
+      toast.error('Invalid motion ID. Cannot delete motion.')
+      setDeleteConfirm({ isOpen: false, motion: null })
+      return
+    }
+
     try {
-      await motionsAPI.delete(deleteConfirm.motion.id)
-      setMotions(prev => prev.filter(m => m.id !== deleteConfirm.motion!.id))
+      await motionsAPI.delete(deleteConfirm.motion.motion_id)
+      setMotions(prev => prev.filter(m => m.motion_id !== deleteConfirm.motion!.motion_id))
       toast.success('Motion deleted successfully')
     } catch (error) {
       console.error('Error deleting motion:', error)
@@ -124,19 +131,19 @@ export function Motions() {
     try {
       if (editingMotion) {
         // Validate editing motion ID before proceeding
-        if (!isValidUUID(editingMotion.id)) {
+        if (!isValidUUID(editingMotion.motion_id)) {
           toast.error('Invalid motion ID. Cannot update motion.')
           setIsModalOpen(false)
           return
         }
 
-        const updated = await motionsAPI.update(editingMotion.id, data)
+        const updated = await motionsAPI.update(editingMotion.motion_id, data)
         const motionWithDetails = {
           ...updated,
           proposer: personnel.find(p => p.id === updated.proposer_id),
           meeting: meetings.find(m => m.id === updated.meeting_id)
         }
-        setMotions(prev => prev.map(m => m.id === updated.id ? motionWithDetails : m))
+        setMotions(prev => prev.map(m => m.motion_id === updated.motion_id ? motionWithDetails : m))
         toast.success('Motion updated successfully')
       } else {
         const created = await motionsAPI.create(data)
