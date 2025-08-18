@@ -138,21 +138,21 @@ export function Motions() {
         }
 
         const updated = await motionsAPI.update(editingMotion.motion_id, data)
-        const motionWithDetails = {
+        const updatedMotion = {
           ...updated,
           proposer: personnel.find(p => p.id === updated.proposer_id),
-          meeting: meetings.find(m => m.id === updated.meeting_id)
+          meeting: meetings.find(m => m.meeting_id === updated.meeting_id)
         }
-        setMotions(prev => prev.map(m => m.motion_id === updated.motion_id ? motionWithDetails : m))
+        setMotions(prev => prev.map(m => m.motion_id === updated.motion_id ? updatedMotion : m))
         toast.success('Motion updated successfully')
       } else {
         const created = await motionsAPI.create(data)
-        const motionWithDetails = {
+        const newMotion = {
           ...created,
           proposer: personnel.find(p => p.id === created.proposer_id),
-          meeting: meetings.find(m => m.id === created.meeting_id)
+          meeting: meetings.find(m => m.meeting_id === created.meeting_id)
         }
-        setMotions(prev => [motionWithDetails, ...prev])
+        setMotions(prev => [newMotion, ...prev])
         toast.success('Motion created successfully')
       }
 
@@ -316,7 +316,7 @@ export function Motions() {
               >
                 <option value="">Select Meeting</option>
                 {meetings.map(meeting => (
-                  <option key={meeting.id} value={meeting.id}>
+                  <option key={meeting.meeting_id} value={meeting.meeting_id}>
                     {meeting.main_topic} - {format(new Date(meeting.date), 'MMM dd, yyyy')}
                   </option>
                 ))}
