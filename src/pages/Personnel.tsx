@@ -120,9 +120,13 @@ export function Personnel() {
       await personnelAPI.delete(deleteConfirm.personnel.id)
       setPersonnel(prev => prev.filter(p => p.id !== deleteConfirm.personnel!.id))
       toast.success('Personnel deleted successfully')
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting personnel:', error)
-      toast.error('Failed to delete personnel')
+      if (error && error.code === '23503') {
+        toast.error('This person cannot be deleted as they are referenced in other records (e.g., as a proposer of a motion).')
+      } else {
+        toast.error('Failed to delete personnel.')
+      }
     } finally {
       setDeleteConfirm({ isOpen: false, personnel: null })
     }
